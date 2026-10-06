@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>CROW EDC — VK ID callback</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;max-width:760px;margin:64px auto;padding:0 20px;line-height:1.55;background:#111;color:#eee}
+    .card{background:#1b1b1b;border:1px solid #333;border-radius:16px;padding:24px}
+    code{word-break:break-all;background:#292929;padding:2px 6px;border-radius:6px}
+    .ok{color:#8bd17c}.warn{color:#f2c66d}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>CROW EDC — VK ID</h1>
+    <p id="status">Страница OAuth callback готова.</p>
+    <div id="details"></div>
+    <p class="warn">Эта страница не сохраняет access token и не отправляет параметры авторизации на сторонние серверы.</p>
+  </div>
+  <script>
+    const p = new URLSearchParams(location.search);
+    const code = p.get('code');
+    const deviceId = p.get('device_id');
+    const state = p.get('state');
+    const error = p.get('error');
+    const status = document.getElementById('status');
+    const details = document.getElementById('details');
+    if (error) {
+      status.textContent = 'VK ID вернул ошибку авторизации.';
+      details.textContent = error;
+    } else if (code) {
+      status.innerHTML = '<span class="ok">Авторизация вернулась на callback успешно.</span>';
+      const rows = [];
+      rows.push('<p>Authorization code получен.</p>');
+      if (deviceId) rows.push('<p>device_id получен.</p>');
+      if (state) rows.push('<p>state получен.</p>');
+      rows.push('<p>Не публикуйте значения этих параметров. Вернитесь в ChatGPT для следующего шага.</p>');
+      details.innerHTML = rows.join('');
+    }
+  </script>
+</body>
+</html>
