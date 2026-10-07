@@ -42,10 +42,11 @@
     return Array.from(a,x=>chars[x%chars.length]).join('');
   }
 
-  let verifier = sessionStorage.getItem('crow_vk_verifier');
-  let state = sessionStorage.getItem('crow_vk_state');
-  if (!verifier) { verifier=randomString(64); sessionStorage.setItem('crow_vk_verifier',verifier); }
-  if (!state) { state=randomString(32); sessionStorage.setItem('crow_vk_state',state); }
+  const store = localStorage;
+  let verifier = store.getItem('crow_vk_verifier');
+  let state = store.getItem('crow_vk_state');
+  if (!verifier) { verifier=randomString(64); store.setItem('crow_vk_verifier',verifier); }
+  if (!state) { state=randomString(32); store.setItem('crow_vk_state',state); }
 
   VKID.Config.init({
     app: APP_ID,
@@ -58,6 +59,9 @@
 
   document.getElementById('login').onclick = () => {
     errorBox.textContent='';
+    verifier=randomString(64); state=randomString(32);
+    store.setItem('crow_vk_verifier',verifier); store.setItem('crow_vk_state',state);
+    VKID.Config.init({app:APP_ID,redirectUrl:REDIRECT,state,codeVerifier:verifier,scope:SCOPE,mode:VKID.ConfigAuthMode.Redirect});
     VKID.Auth.login().catch(e => errorBox.textContent='Ошибка запуска VK ID: '+JSON.stringify(e));
   };
 
@@ -78,8 +82,8 @@
         document.getElementById('result').hidden=false;
         status.innerHTML='<span class="ok">Авторизация завершена.</span>';
         history.replaceState({},document.title,REDIRECT);
-        sessionStorage.removeItem('crow_vk_verifier');
-        sessionStorage.removeItem('crow_vk_state');
+        store.removeItem('crow_vk_verifier');
+        store.removeItem('crow_vk_state');
       }).catch(e => {
         errorBox.textContent='Ошибка обмена кода на токен: '+JSON.stringify(e);
         status.textContent='Авторизация не завершена.';
