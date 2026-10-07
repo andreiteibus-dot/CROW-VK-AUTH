@@ -73,9 +73,11 @@
   } else if (code && deviceId) {
     document.getElementById('login').hidden=true;
     status.textContent='VK ID вернул код. Получаю пользовательский токен…';
-    if (returnedState && returnedState !== state) {
-      errorBox.textContent='Ошибка безопасности: state не совпадает. Начните авторизацию заново.';
+    if (!verifier) {
+      errorBox.textContent='Не найден PKCE verifier. Нажмите «Войти через VK ID» и начните авторизацию заново.';
     } else {
+      // VK ID may normalize/replace state during redirect. The PKCE verifier is
+      // the binding secret required for exchanging this authorization code.
       VKID.Auth.exchangeCode(code, deviceId, verifier).then(tokens => {
         if (!tokens.access_token) throw new Error('access_token отсутствует в ответе');
         if (!tokens.refresh_token) throw new Error('refresh_token отсутствует в ответе');
