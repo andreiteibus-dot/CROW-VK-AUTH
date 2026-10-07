@@ -16,7 +16,7 @@
 <body>
   <div class="card">
     <h1>CROW EDC — VK Analytics</h1>
-    <p id="status">Готово к безопасной авторизации через VK ID.</p>
+    <p id="status">Готово к авторизации VK ID с минимальным правом stats.</p>
     <p class="muted">Приложение: CROW EDC Analytics · App ID 54807350</p>
     <button id="login">Войти через VK ID</button>
     <div id="result" hidden>
@@ -31,7 +31,7 @@
 (() => {
   const APP_ID = 54807350;
   const REDIRECT = 'https://andreiteibus-dot.github.io/CROW-VK-AUTH/';
-  const SCOPE = 'groups wall stats';
+  const SCOPE = 'stats';
   const VKID = window.VKIDSDK;
   const status = document.getElementById('status');
   const errorBox = document.getElementById('error');
