@@ -21,8 +21,8 @@
     <button id="login">Войти через VK ID</button>
     <div id="result" hidden>
       <p class="ok">Токен получен в вашем браузере. Он не сохраняется в GitHub Pages.</p>
-      <p>Скопируйте его и сохраните в GitHub Secret <b>VK_USER_TOKEN</b>. Не отправляйте токен в чат.</p>
-      <textarea id="token" readonly></textarea>
+      <p>Скопируйте конфигурацию авторизации и сохраните только на своём компьютере. Не отправляйте её в чат и не сохраняйте в GitHub.</p>
+      <textarea id="token" readonly style="min-height:180px"></textarea>
       <p><button class="secondary" id="copy">Скопировать токен</button></p>
     </div>
     <pre id="error" class="err"></pre>
@@ -78,7 +78,12 @@
     } else {
       VKID.Auth.exchangeCode(code, deviceId, verifier).then(tokens => {
         if (!tokens.access_token) throw new Error('access_token отсутствует в ответе');
-        document.getElementById('token').value=tokens.access_token;
+        if (!tokens.refresh_token) throw new Error('refresh_token отсутствует в ответе');
+        document.getElementById('token').value=JSON.stringify({
+          access_token: tokens.access_token,
+          refresh_token: tokens.refresh_token,
+          device_id: deviceId
+        }, null, 2);
         document.getElementById('result').hidden=false;
         status.innerHTML='<span class="ok">Авторизация завершена.</span>';
         history.replaceState({},document.title,REDIRECT);
@@ -93,7 +98,7 @@
 
   document.getElementById('copy').onclick = async () => {
     await navigator.clipboard.writeText(document.getElementById('token').value);
-    document.getElementById('copy').textContent='Скопировано';
+    document.getElementById('copy').textContent='Конфигурация скопирована';
   };
 })();
 </script>
